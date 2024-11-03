@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API de Usuarios</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script>
+async function obtenerUsuarios() {
+const response = await fetch('http://localhost/api.php');
+const users = await response.json();
+const userList = document.getElementById('userList');
+userList.innerHTML = ''; // Limpiar la lista antes de añadir
+users.forEach(user => {
+const li = document.createElement('li');
+li.textContent = `Nombre: ${user.Nombre}, Paterno:${user.Paterno}, Materno:${user.Materno}, RFC:${user.RFC}, CURP:${user.CURP}, Fe_nacimiento:${user.Fe_nacimiento},  Email: ${user.Email}`;
+userList.appendChild(li);
+});
+}
+async function agregarUsuario() {
+const nombre = document.getElementById('nombre').value;
+const materno = document.getElementById('materno').value;
+const paterno = document.getElementById('paterno').value;
+const curp = document.getElementById('curp').value;
+const rfc = document.getElementById('rfc').value;
+const fe_nacimiento = document.getElementById('fe_nacimiento').value;
+const email = document.getElementById('email').value;
+const response = await fetch('http://localhost/api.php', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify({ nombre,materno,paterno,curp,rfc,fe_nacimiento, email })
+});
+const result = await response.json();
+console.log(result);
+obtenerUsuarios(); // Actualizar la lista de usuarios
+}
+async function eliminarUsuario() {
+const id = document.getElementById('idEliminar').value;
+const response = await fetch(`http://localhost/api.php/${id}`, {
+method: 'DELETE'
+});
+const result = await response.json();
+console.log(result);
+obtenerUsuarios(); // Actualizar la lista de usuarios
+}
+</script>
+</head>
+<body>
+<h1>API de Usuarios</h1>
+<h2>Agregar Usuario</h2>
+<input type="text" id="nombre" placeholder="Nombre" required>
+<input type="text" id="paterno" placeholder="Paterno" required>
+<input type="text" id="materno" placeholder="Materno" required>
+<input type="text" id="curp" placeholder="curp" required>
+<input type="text" id="rfc" placeholder="rfc" required>
+<input type="date" id="fe_nacimiento" placeholder="Nacimeinto" required>
+<input type="email" id="email" placeholder="Email" required>
+<button onclick="agregarUsuario()">Agregar Usuario</button>
+<h2>Eliminar Usuario</h2>
+<input type="number" id="idEliminar" placeholder="ID del Usuario" required>
+<button onclick="eliminarUsuario()">Eliminar Usuario</button>
+<h2>Lista de Usuarios</h2>
+<ul id="userList"></ul>
+<button onclick="obtenerUsuarios()">Cargar Usuarios</button>
+</body>
+</html>
